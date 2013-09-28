@@ -19,8 +19,10 @@ def commands(user,channel,message):
       irc.send('PRIVMSG %s :%s: Mutualab is awesome!!!!!!!\r\n' % (channel,user))
     elif message.find(bot+': help')!=-1:
       irc.send('PRIVMSG %s :%s: you can find all the help you need here: http://mutualab.org.\r\n' % (channel,user))
+    elif message.find(bot+': coffee')!=-1:
+      coffee(channel)
     elif message.find('Hello ' + bot)!=-1:
-      irc.send("PRIVMSG "+ channel +" :Hello " + user +" !\n")
+      hello(channel, user)
     elif message.find(bot)!=-1:
       irc.send('PRIVMSG %s :%s: umm ? \r\n' % (channel,user))
 
@@ -39,5 +41,8 @@ while True: #While Connection is Active
   if ircmsg.find(' PRIVMSG ')!=-1:
     channel=ircmsg.split(' PRIVMSG ')[-1].split(' :')[0]
     commands(user,channel,ircmsg)
-  if ircmsg.find("PING :") != -1: # if the server pings us then we've got to respond!
+  if ircmsg.find("PING :") != -1:
     ping()
+  if ircmsg.find(" JOIN ") != -1:
+    channel=ircmsg.split(' JOIN ')[-1].split(' :')[0]
+    hello(channel, user)
