@@ -2,8 +2,7 @@
 import socket, ssl
 
 bot = 'aBarre'
-chan = '#lentremise'
-debug = False
+chan = '#coworkinglille'
 network = 'irc.freenode.net'
 port = 6697
 socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -20,6 +19,10 @@ def commands(user,channel,message):
       irc.send('PRIVMSG %s :%s: Mutualab is awesome!!!!!!!\r\n' % (channel,user))
     elif message.find(bot+': help')!=-1:
       irc.send('PRIVMSG %s :%s: you can find all the help you need here: http://mutualab.org.\r\n' % (channel,user))
+    elif message.find('Hello ' + bot)!=-1:
+      irc.send("PRIVMSG "+ channel +" :Hello " + user +" !\n")
+    elif message.find(bot)!=-1:
+      irc.send('PRIVMSG %s :%s: umm ? \r\n' % (channel,user))
 
 def ping(): # This is our first function! It will respond to server Pings.
   irc.send("PONG :pingis\n")  
@@ -27,20 +30,14 @@ def ping(): # This is our first function! It will respond to server Pings.
 def sendmsg(chan , msg): # This is the send message function, it simply sends messages to the channel.
   irc.send("PRIVMSG "+ chan +" :"+ msg +"\n") 
 
-def hello(): # This function responds to a user that inputs "Hello Mybot"
-  irc.send("PRIVMSG "+ channel +" :Hello!\n")
-
 while True: #While Connection is Active
   ircmsg = irc.recv(2048) # receive data from the server
   ircmsg = ircmsg.strip('\n\r') # removing any unnecessary linebreaks.
-  print(ircmsg) # Here we print what's coming from the server
+  #print(ircmsg) # Here we print what's coming from the server
+  user=ircmsg.split('!')[0][1:]
 
   if ircmsg.find(' PRIVMSG ')!=-1:
-    user=ircmsg.split('!')[0][1:]
     channel=ircmsg.split(' PRIVMSG ')[-1].split(' :')[0]
     commands(user,channel,ircmsg)
-  if ircmsg.find(":Hello "+ bot) != -1: # If we can find "Hello Mybot" it will call the function hello()
-    hello()
-
   if ircmsg.find("PING :") != -1: # if the server pings us then we've got to respond!
     ping()
