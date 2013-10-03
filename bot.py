@@ -1,5 +1,7 @@
 #!/usr/bin/python
-import socket, ssl
+import socket, ssl, re
+import urllib2
+from bs4 import BeautifulSoup
 
 bot = 'aBarre'
 chan = '#coworkinglille'
@@ -21,6 +23,8 @@ def commands(user,channel,message):
       irc.send('PRIVMSG %s :%s: you can find all the help you need here: http://mutualab.org.\r\n' % (channel,user))
     elif message.find(bot+': coffee')!=-1:
       coffee(channel)
+    elif message.find('http://')!=-1:
+      GimmeUrlInfos(channel, message)
     elif message.find('Hello ' + bot)!=-1:
       hello(channel, user)
     elif message.find(bot)!=-1:
@@ -32,10 +36,28 @@ def ping(): # This is our first function! It will respond to server Pings.
 def sendmsg(chan , msg): # This is the send message function, it simply sends messages to the channel.
   irc.send("PRIVMSG "+ chan +" :"+ msg +"\n") 
 
+def hello(channel, user):
+  irc.send("PRIVMSG %s :Hello %s !\n" % (channel, user))
+
+def coffee(channel):
+  irc.send("PRIVMSG %s :( (      \n" % (channel)) 
+  irc.send("PRIVMSG %s :  ) )    \n" % (channel)) 
+  irc.send("PRIVMSG %s :........ \n" % (channel)) 
+  irc.send("PRIVMSG %s :|      |]\n" % (channel)) 
+  irc.send("PRIVMSG %s :\      / \n" % (channel)) 
+  irc.send("PRIVMSG %s : `----'  \n" % (channel)) 
+
+def GimmeUrlInfos(channel,message):
+  link = re.findall('http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+', message) 
+  response = urllib2.urlopen(link[0])
+  html = BeautifulSoup(response.read())
+  urlTitle = html.find('title')
+  irc.send("PRIVMSG %s :Link infos >>> " % (channel) + urlTitle.contents[0] + "\r\n" )
+
 while True: #While Connection is Active
   ircmsg = irc.recv(2048) # receive data from the server
   ircmsg = ircmsg.strip('\n\r') # removing any unnecessary linebreaks.
-  #print(ircmsg) # Here we print what's coming from the server
+  # print(ircmsg) # Here we print what's coming from the server
   user=ircmsg.split('!')[0][1:]
 
   if ircmsg.find(' PRIVMSG ')!=-1:
