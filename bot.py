@@ -11,7 +11,7 @@ socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 socket.connect((network,port))
 irc = ssl.wrap_socket(socket)
 irc.send('NICK ' + bot + '\r\n') #Send our Nick(Notice the Concatenation)
-irc.send('USER AffixBot AffixBot AffixBot :Affix IRC\r\n') #Send User Info to the server
+irc.send('USER Bot Bot Bot :aBarre IRC\r\n') #Send User Info to the server
 irc.send('JOIN ' + chan + '\r\n') # Join the pre defined channel
 irc.send('PRIVMSG ' + chan + ' :Hello.\r\n') #Send a Message to the  channel
 
@@ -52,7 +52,7 @@ def GimmeUrlInfos(channel,message):
   response = urllib2.urlopen(link[0])
   html = BeautifulSoup(response.read())
   urlTitle = html.find('title')
-  irc.send("PRIVMSG %s :Link infos >>> " % (channel) + urlTitle.contents[0] + "\r\n" )
+  irc.send("PRIVMSG %s :Link infos >>> " % (channel) + urlTitle.contents[0].encode('utf-8') + "\r\n" )
 
 while True: #While Connection is Active
   ircmsg = irc.recv(2048) # receive data from the server
