@@ -17,15 +17,15 @@ irc.send('PRIVMSG ' + chan + ' :\_O< coin!! \r\n') #Send a Message to the  chann
 
 # Set up our commands function
 def commands(user,channel,message):
-    if message.find(bot +': mutualab?')!=-1:
+    if message.find('mutualab?')!=-1:
       irc.send('PRIVMSG %s :%s: Mutualab is awesome!!!!!!!\r\n' % (channel,user))
     elif message.find(bot+': help')!=-1:
       irc.send('PRIVMSG %s :%s: you can find all the help you need here: http://mutualab.org.\r\n' % (channel,user))
     elif message.find('coffee')!=-1:
       coffee(channel)
-    elif message.find('http://')!=-1:
+    elif message.find('http')!=-1:
       GimmeUrlInfos(channel, message)
-    elif message.find('Hello ' + bot)!=-1:
+    elif message.find('Hello ')!=-1:
       hello(channel, user)
     elif message.find(bot)!=-1:
       irc.send('PRIVMSG %s :%s: umm ? \r\n' % (channel,user))
@@ -52,7 +52,7 @@ def GimmeUrlInfos(channel,message):
   response = urllib2.urlopen(link[0])
   html = BeautifulSoup(response.read())
   urlTitle = html.find('title')
-  irc.send("PRIVMSG %s : |--> " % (channel) + urlTitle.contents[0].encode('utf-8') + "\r\n" )
+  irc.send("PRIVMSG %s :  --> " % (channel) + urlTitle.contents[0].encode('utf-8') + "\r\n" )
 
 while True: #While Connection is Active
   ircmsg = irc.recv(2048) # receive data from the server
