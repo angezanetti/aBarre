@@ -1,7 +1,6 @@
 #!/usr/bin/python
 import socket, ssl, re
-import urllib2
-from bs4 import BeautifulSoup
+import requests
 
 bot = 'aBarre'
 chan = '#coworkinglille'
@@ -27,8 +26,8 @@ def commands(user,channel,message):
       GimmeUrlInfos(channel, message)
     elif message.find('Hello ')!=-1:
       hello(channel, user)
-    elif message.find(bot)!=-1:
-      irc.send('PRIVMSG %s :%s: umm ? \r\n' % (channel,user))
+    # elif message.find(bot)!=-1:
+    #   irc.send('PRIVMSG %s :%s: umm ? \r\n' % (channel,user))
 
 def ping(): # This is our first function! It will respond to server Pings.
   irc.send("PONG :pingis\n")  
@@ -49,11 +48,12 @@ def coffee(channel):
 
 def GimmeUrlInfos(channel,message):
   link = re.findall('http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+', message) 
-  response = urllib2.urlopen(link[0])
-  html = BeautifulSoup(response.read())
-  urlTitle = html.find('title')
-  irc.send("PRIVMSG %s :  --> " % (channel) + urlTitle.contents[0].encode('utf-8') + "\r\n" )
-
+  r= requests.get(link[0])
+  html = r.text
+  # Get the title of the HTML
+  matches = re.findall('<[title^>]*>(.*)<\/[title^>]*>', html)
+  irc.send("PRIVMSG %s :  --> " % (channel) + matches[0].encode('utf-8') + "\r\n" )
+ 
 while True: #While Connection is Active
   ircmsg = irc.recv(2048) # receive data from the server
   ircmsg = ircmsg.strip('\n\r') # removing any unnecessary linebreaks.
