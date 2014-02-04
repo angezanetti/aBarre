@@ -1,6 +1,7 @@
 #!/usr/bin/python
 import socket, ssl, re
 import requests
+import json
 
 bot = 'aBarre'
 chan = '#coworkinglille'
@@ -26,8 +27,9 @@ def commands(user,channel,message):
       GimmeUrlInfos(channel, message)
     elif message.find('Hello ')!=-1:
       hello(channel, user)
-    # elif message.find(bot)!=-1:
-    #   irc.send('PRIVMSG %s :%s: umm ? \r\n' % (channel,user))
+    elif message.find(bot)!=-1:
+      RandomQuote(channel, user)
+      # irc.send('PRIVMSG %s :%s: umm ? \r\n' % (channel,user))
 
 def ping(): # This is our first function! It will respond to server Pings.
   irc.send("PONG :pingis\n")  
@@ -54,6 +56,12 @@ def GimmeUrlInfos(channel,message):
   matches = re.findall('<[title^>]*>(.*)<\/[title^>]*>', html)
   irc.send("PRIVMSG %s :  --> " % (channel) + matches[0].encode('utf-8') + "\r\n" )
  
+def RandomQuote(channel, user):
+  r = requests.get('http://api.icndb.com/jokes/random')
+  data = r.json()
+  quote = data['value']['joke']
+  irc.send('PRIVMSG %s :%s:' % (channel,user) + (quote) + '\r\n' )
+
 while True: #While Connection is Active
   ircmsg = irc.recv(2048) # receive data from the server
   ircmsg = ircmsg.strip('\n\r') # removing any unnecessary linebreaks.
