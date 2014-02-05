@@ -54,7 +54,8 @@ def GimmeUrlInfos(channel,message):
   html = r.text
   # Get the title of the HTML
   matches = re.findall('<[title^>]*>(.*)<\/[title^>]*>', html)
-  irc.send("PRIVMSG %s :  --> " % (channel) + matches[0].encode('utf-8') + "\r\n" )
+  if(matches):
+    irc.send("PRIVMSG %s :  --> " % (channel) + matches[0].encode('utf-8') + "\r\n" )
  
 def RandomQuote(channel, user):
   r = requests.get('http://api.icndb.com/jokes/random')
